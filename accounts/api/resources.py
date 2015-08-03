@@ -27,7 +27,7 @@ class AccountResource(ModelResource):
     last_login = fields.DateField(readonly=True)
 
     class Meta:
-        allowed_methods = ['get', 'patch']
+        allowed_methods = ['get', 'patch', 'post']
         always_return_data = True
         authentication = SessionAuthentication()
         authorization = Authorization()
