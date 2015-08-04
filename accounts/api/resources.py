@@ -21,27 +21,22 @@ from tastypie import fields
 # INVENTORY
 from accounts.forms import UserForm
 from accounts.models import User
+from permissions import AccountAuthorization
 
 class AccountResource(ModelResource):
 
-    created_at = fields.DateTimeField()
-    updated_at = fields.DateTimeField()
+    created_at = fields.DateTimeField(readonly=True)
+    last_login = fields.DateTimeField(readonly=True)
     permissions = fields.CharField(readonly=True)
 
     class Meta:
-        allowed_methods = ['get', 'patch', 'post']
+        allowed_methods = ['get', 'patch', 'post', 'delete']
         always_return_data = True
         authentication = SessionAuthentication()
-        authorization = Authorization()
+        authorization = AccountAuthorization()
         excludes = ['password', 'deleted_at', 'updated_at']
         queryset = User.objects.all()
         resource_name = 'account'
-        validation = CleanedDataFormValidation(form_class=UserForm)
-
-    def post_list(self, request, **kwargs):
-        print request.body
-        return HttpBadRequest()
-        return super(AccountResource, self).post_list(request, **kwargs)
 
     def dehydrate_created_at(self, bundle):
         if bundle.obj.created_at:

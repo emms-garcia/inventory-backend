@@ -11,14 +11,6 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ('username', 'first_name', 'last_name', 'password')
 
-
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if not self.instance.id or self.instance.password != password:
-            if len(password) < 6:
-                raise forms.ValidationError(_(u"La contraseña debe tener al menos 6 caracteres."))
-        return password
-
     def clean_username(self):
         username = self.cleaned_data["username"]
         if username:
@@ -28,10 +20,8 @@ class UserForm(forms.ModelForm):
                 return username
 
             if self.instance.id and user.id == self.instance.id:
-                return username
-
                 raise forms.ValidationError(_(u"El nombre de usuario ya existe."))
-        
+            return username
         raise forms.ValidationError(_(u"Éste campo es requerido."))
 
     def clean_first_name(self):
