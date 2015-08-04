@@ -15,16 +15,18 @@ from tastypie.authorization import Authorization
 from tastypie.http import HttpAccepted, HttpBadRequest, HttpNotFound, HttpResponse, HttpUnauthorized
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
+from tastypie.validation import CleanedDataFormValidation
 from tastypie import fields
 
 # INVENTORY
+from accounts.forms import UserForm
 from accounts.models import User
 
 class AccountResource(ModelResource):
 
+    created_at = fields.DateTimeField()
+    updated_at = fields.DateTimeField()
     permissions = fields.CharField(readonly=True)
-    created_at = fields.DateField(readonly=True)
-    last_login = fields.DateField(readonly=True)
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post']
@@ -32,9 +34,14 @@ class AccountResource(ModelResource):
         authentication = SessionAuthentication()
         authorization = Authorization()
         excludes = ['password', 'deleted_at', 'updated_at']
-        allowed_update_fields = ['first_name', 'last_name', 'password']
         queryset = User.objects.all()
         resource_name = 'account'
+        validation = CleanedDataFormValidation(form_class=UserForm)
+
+    def post_list(self, request, **kwargs):
+        print request.body
+        return HttpBadRequest()
+        return super(AccountResource, self).post_list(request, **kwargs)
 
     def dehydrate_created_at(self, bundle):
         if bundle.obj.created_at:

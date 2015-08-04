@@ -41,8 +41,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, Dated, PermissionsMixin):
     
-    first_name = models.CharField(max_length=254, null=True, blank=True)
-    last_name = models.CharField(max_length=254, null=True, blank=True)
+    first_name = models.CharField(max_length=254, null=False, blank=True)
+    last_name = models.CharField(max_length=254, null=False, blank=True)
 
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -67,3 +67,5 @@ class User(AbstractBaseUser, Dated, PermissionsMixin):
 
     def get_short_name():
         return self.first_name
+
+
