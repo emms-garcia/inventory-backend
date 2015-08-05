@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 # PYTHON
 from datetime import datetime
@@ -7,19 +7,15 @@ import time
 # DJANGO
 from django.conf.urls import url
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.contrib.auth.hashers import make_password
-from django.utils import timezone
 
 # TASTYPIE
 from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import Authorization
-from tastypie.http import HttpAccepted, HttpBadRequest, HttpNotFound, HttpResponse, HttpUnauthorized
+from tastypie.http import HttpAccepted, HttpResponse, HttpUnauthorized
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from tastypie import fields
 
 # INVENTORY
-from accounts.forms import UserForm
 from accounts.models import User
 from permissions import AccountAuthorization
 from validations import AccountValidation

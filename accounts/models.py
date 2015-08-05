@@ -1,3 +1,4 @@
+# coding: utf-8
 
 # DJANGO
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -5,8 +6,6 @@ from django.db import models
 
 # INVENTORY
 from utils.models import Dated
-
-# Create your models here.
 
 class UserManager(BaseUserManager):
 
@@ -41,8 +40,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, Dated, PermissionsMixin):
     
-    first_name = models.CharField(max_length=254, null=False, blank=True)
-    last_name = models.CharField(max_length=254, null=False, blank=True)
+    first_name = models.CharField(max_length=254, null=True, blank=True)
+    last_name = models.CharField(max_length=254, null=True, blank=True)
 
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -67,5 +66,3 @@ class User(AbstractBaseUser, Dated, PermissionsMixin):
 
     def get_short_name():
         return self.first_name
-
-

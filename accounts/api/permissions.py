@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 # TASTYPIE
 from tastypie.authorization import Authorization
-from tastypie.exceptions import Unauthorized
 
 
 class AccountAuthorization(Authorization):

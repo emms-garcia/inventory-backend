@@ -21,7 +21,7 @@ class AccountValidation(Validation):
             try:
                 validate_email(bundle.data['username'])
             except ValidationError:
-                errors['username'] = [_(u'Nombre de usuario: Debe ser un correo.')]
+                errors['username'] = [_(u'Nombre de usuario: Debe ser un correo electrónico.')]
         else:
             errors['username'] = [_(u'Nombre de usuario: Este campo es requerido.')]
 

@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Django settings for inventory project.
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tastypie',
     'accounts',
+    'clients',
     'utils'
 )
 
