@@ -30,7 +30,7 @@ class ClientResource(ModelResource):
         authentication = SessionAuthentication()
         authorization = ClientAuthorization()
         excludes = ['deleted_at']
-        queryset = Client.objects.all()
+        queryset = Client.objects.all().order_by('id')
         resource_name = 'client'
         validation = ClientValidation()
 

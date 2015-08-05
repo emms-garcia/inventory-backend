@@ -33,8 +33,8 @@ class ClientValidation(Validation):
         # Company required, must be longer than 2 characters
         if bundle.data.get('company'):
             if len(bundle.data['company']) < 3:
-                errors['company'] = [_(u'Nombre: Este campo debe tener al menos 3 caracteres.')]
+                errors['company'] = [_(u'Compañía: Este campo debe tener al menos 3 caracteres.')]
         else:
-            errors['company'] = [_(u'Nombre: Este campo es requerido.')]
+            errors['company'] = [_(u'Compañía: Este campo es requerido.')]
 
         return errors
