@@ -1,27 +1,24 @@
 # coding: utf-8
 
 # PYTHON
-from datetime import datetime
 import time
-
-# DJANGO
-from django.conf.urls import url
 
 # TASTYPIE
 from tastypie.authentication import SessionAuthentication
-from tastypie.http import HttpAccepted, HttpResponse, HttpUnauthorized
 from tastypie.resources import ModelResource
-from tastypie.utils import trailing_slash
 from tastypie import fields
 
 # INVENTORY
-from clients.models import Client
-from permissions import ClientAuthorization
-from validations import ClientValidation
+from ..models import Client
+from .permissions import ClientAuthorization
+from .validations import ClientValidation
+from users.api.resources import UserResource
+
 
 class ClientResource(ModelResource):
 
     created_at = fields.DateTimeField(readonly=True)
+    created_by = fields.ToOneField(UserResource, attribute='created_by')
     updated_at = fields.DateTimeField(readonly=True)
 
     class Meta:
@@ -31,7 +28,7 @@ class ClientResource(ModelResource):
         authorization = ClientAuthorization()
         excludes = ['deleted_at']
         queryset = Client.objects.all().order_by('id')
-        resource_name = 'client'
+        resource_name = 'clients'
         validation = ClientValidation()
 
     def dehydrate_created_at(self, bundle):
@@ -41,3 +38,10 @@ class ClientResource(ModelResource):
     def dehydrate_updated_at(self, bundle):
         if bundle.obj.updated_at:
             return time.mktime(bundle.obj.updated_at.timetuple())
+
+    def obj_create(self, bundle, **kwargs):
+        return super(ClientResource, self).obj_create(bundle, **kwargs)
+
+    def hydrate_created_by(self, bundle):
+        bundle.obj.created_by = bundle.request.user
+        return bundle
