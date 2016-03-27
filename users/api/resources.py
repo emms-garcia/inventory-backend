@@ -35,7 +35,6 @@ class UserResource(ModelResource):
         excludes = ['password', 'deleted_at', 'updated_at']
         queryset = User.objects.all()
         resource_name = 'users'
-        validation = UserValidation()
 
     def dehydrate_created_at(self, bundle):
         if bundle.obj.created_at:

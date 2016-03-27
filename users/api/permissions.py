@@ -26,14 +26,14 @@ class UserAuthorization(Authorization):
 
     def read_detail(self, object_list, bundle):
         return bundle.obj == bundle.request.user or \
-            bundle.request.user.is_superuser
+            bundle.request.user.parent == None
 
     def update_list(self, object_list, bundle):
         return False
 
     def update_detail(self, object_list, bundle):
         return bundle.obj.id == bundle.request.user.id or \
-            bundle.request.user.is_superuser
+            bundle.request.user.parent == None
 
     def delete_list(self, object_list, bundle):
         return False
