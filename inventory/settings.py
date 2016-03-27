@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'tastypie',
     'commons',
     'clients',
+    'companies',
     'products',
     'users'
 )

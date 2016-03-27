@@ -73,16 +73,20 @@ class UserResource(ModelResource):
         data = self.deserialize(request, request.body, format=request.META.get(
             'CONTENT_TYPE', 'application/json'))
 
-        data['is_staff'] = True
-        username = data.pop('username')
+        if not request.user.can('create_user'):
+            return HttpUnauthorized()
 
+        username = data.pop('username')
         try:
-            User.objects.create_user(username, **data)
+            if request.user.is_anonymous():
+                User.objects.create_account(username, **data)
+            else:
+                data['parent'] = request.user
+                data['company'] = request.user.company
+                User.objects.create_user(username, **data)
             return HttpCreated()
-        except IntegrityError:
+        except IntegrityError as e:
             return HttpBadRequest('Este nombre de usuario ya fue utilizado.')
-        except Exception:
-            return HttpBadRequest()
 
     def login(self, request, **kwargs):
         self.method_check(request, allowed=['post'])

@@ -4,6 +4,10 @@
     Permissions for Account Resource.
 """
 
+# DJANGO
+from django.db.models import Q
+
+# TASTYPIE
 from tastypie.authorization import Authorization
 
 
@@ -15,8 +19,10 @@ class UserAuthorization(Authorization):
     def read_list(self, object_list, bundle):
         if bundle.request.user.is_superuser:
             return object_list.order_by('first_name')
+        elif bundle.request.user.parent == None:
+            return object_list.filter(Q(parent=bundle.request.user) | Q(id=bundle.request.user.id))
         else:
-            return object_list.filter(pk=bundle.request.user.id)
+            return object_list.filter(id=bundle.request.user.id)
 
     def read_detail(self, object_list, bundle):
         return bundle.obj == bundle.request.user or \

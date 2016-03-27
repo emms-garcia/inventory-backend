@@ -6,6 +6,7 @@ from django.db import models
 
 # INVENTORY
 from commons.models import Dated
+from companies.models import Company
 
 
 class UserManager(BaseUserManager):
@@ -23,6 +24,13 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+
+    def create_account(self, username, password=None, first_name=None, last_name=None, **extra_fields):
+        extra_fields['company'] = Company.objects.create(name=extra_fields.get('company'))
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, password, first_name, last_name, **extra_fields)
 
     def create_user(self, username, password=None, first_name=None, last_name=None, **extra_fields):
         extra_fields.setdefault('is_active', True)
@@ -54,6 +62,9 @@ class User(AbstractBaseUser, Dated, PermissionsMixin):
 
     parent = models.ForeignKey('self', null=True, blank=True)
 
+    company = models.ForeignKey('companies.Company',
+        related_name='users', null=True)
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
@@ -65,6 +76,11 @@ class User(AbstractBaseUser, Dated, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+    def can(self, permission):
+        if permission == 'create_user':
+            return self.parent != None
+        return False
 
     def get_full_name(self):
         return self.first_name + ' ' + self.last_name

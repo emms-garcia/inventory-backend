@@ -5,6 +5,7 @@ import time
 
 # TASTYPIE
 from tastypie.authentication import SessionAuthentication
+from tastypie.exceptions import BadRequest, NotFound
 from tastypie import fields
 
 # INVENTORY
@@ -37,6 +38,12 @@ class UOMResource(DatedResource):
         if bundle.obj.updated_at:
             return time.mktime
 
+    def obj_delete(self, bundle, **kwargs):
+        bundle.obj = self.obj_get(bundle=bundle, **kwargs)
+        if bundle.obj.products.count():
+            raise BadRequest('Cannot delete unit of measure. Used by one or more products.')
+        else:
+            super(UOMResource, self).obj_delete(bundle, **kwargs)
 
 class ProductResource(DatedResource):
 
