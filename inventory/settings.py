@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'clients',
     'companies',
     'products',
+    'product_groups',
     'users'
 )
 

@@ -41,7 +41,7 @@ class UOMResource(DatedResource):
     def obj_delete(self, bundle, **kwargs):
         bundle.obj = self.obj_get(bundle=bundle, **kwargs)
         if bundle.obj.products.count():
-            raise BadRequest('Cannot delete unit of measure. Used by one or more products.')
+            raise BadRequest('No se puede borrar la unidad de medida. Se encuentra en uso en uno o más productos.')
         else:
             super(UOMResource, self).obj_delete(bundle, **kwargs)
 
@@ -72,3 +72,10 @@ class ProductResource(DatedResource):
     def hydrate_created_by(self, bundle):
         bundle.obj.created_by = bundle.request.user
         return bundle
+
+    def obj_delete(self, bundle, **kwargs):
+        bundle.obj = self.obj_get(bundle=bundle, **kwargs)
+        if bundle.obj.group_products.count():
+            raise BadRequest('No se puede borrar el producto. Se encuentra en uso en uno o más grupos.')
+        else:
+            super(UOMResource, self).obj_delete(bundle, **kwargs)

@@ -27,6 +27,10 @@ class Product(Dated):
         blank=False,
         default=1.0,
         null=False)
+    quantity = models.IntegerField(
+        default=0,
+        null=False,
+        blank=False)
     uom = models.ForeignKey(UOM,
         related_name='products')
 
