@@ -27,6 +27,7 @@ class UserResource(ModelResource):
     id = fields.CharField(attribute='eid', readonly=True)
     created_at = fields.FloatField(readonly=True)
     last_login = fields.FloatField(readonly=True)
+    permissions = fields.ListField(readonly=True)
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
@@ -45,6 +46,9 @@ class UserResource(ModelResource):
     def dehydrate_last_login(self, bundle):
         if bundle.obj.last_login:
             return time.mktime(bundle.obj.last_login.timetuple())
+
+    def dehydrate_permissions(self, bundle):
+        return bundle.obj.get_permissions()
 
     def obj_update(self, bundle, **kwargs):
         bundle = super(UserResource, self).obj_update(bundle, **kwargs)
@@ -77,15 +81,20 @@ class UserResource(ModelResource):
         username = data.pop('username')
         try:
             if request.user.is_anonymous():
-                User.objects.create_account(username, **data)
+                user = User.objects.create_account(username, **data)
             else:
-                if not request.user.can('create_user'):
-                    return HttpUnauthorized()
+                if not request.user.has_perm('users.add_user'):
+                    return HttpUnauthorized('El usuario no tiene permiso para crear usuarios.')
 
                 data['parent'] = request.user
                 data['company'] = request.user.company
-                User.objects.create_user(username, **data)
-            return HttpCreated()
+                user = User.objects.create_user(username, **data)
+
+            bundle = self.build_bundle(obj=user, request=request)
+            desired_format = self.determine_format(request)
+            data = self.serialize(
+                request, self.full_dehydrate(bundle), desired_format)
+            return HttpCreated(data)
         except IntegrityError as e:
             return HttpBadRequest('Este nombre de usuario ya fue utilizado.')
 
@@ -107,9 +116,9 @@ class UserResource(ModelResource):
                     request, self.full_dehydrate(bundle), desired_format)
                 return HttpResponse(data)
             else:
-                return HttpUnauthorized()
+                return HttpUnauthorized('El usuario no está activo.')
         else:
-            return HttpUnauthorized()
+            return HttpUnauthorized('El nombre de usuario o contraseña no coinciden.')
 
     def logout(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
