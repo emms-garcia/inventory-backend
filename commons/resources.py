@@ -3,6 +3,9 @@
 # PYTHON
 import time
 
+# DJANGO
+from django.conf.urls import url
+
 # TASTYPIE
 from tastypie import fields
 from tastypie.resources import ModelResource

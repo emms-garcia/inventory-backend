@@ -18,11 +18,14 @@ from users.api.resources import UserResource
 
 class UOMResource(DatedResource):
 
+    id = fields.CharField(attribute='eid', readonly=True)
+
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
         authentication = SessionAuthentication()
         authorization = UOMAuthorization()
-        excludes = ['deleted_at']
+        detail_uri_name = 'eid'
+        excludes = ['deleted_at', 'eid']
         filtering = {
             'name': ('icontains')
         }
@@ -36,7 +39,7 @@ class UOMResource(DatedResource):
 
     def dehydrate_updated_at(self, bundle):
         if bundle.obj.updated_at:
-            return time.mktime
+            return time.mktime(bundle.obj.updated_at.timetuple())
 
     def obj_delete(self, bundle, **kwargs):
         bundle.obj = self.obj_get(bundle=bundle, **kwargs)
@@ -49,6 +52,7 @@ class ProductResource(DatedResource):
 
     created_at = fields.DateTimeField(readonly=True)
     created_by = fields.ToOneField(UserResource, attribute='created_by')
+    id = fields.CharField(attribute='eid', readonly=True)
     uom = fields.ToOneField(UOMResource, attribute='uom', full=True)
     updated_at = fields.DateTimeField(readonly=True)
 
@@ -56,7 +60,8 @@ class ProductResource(DatedResource):
         allowed_methods = ['get', 'patch', 'post', 'delete']
         authentication = SessionAuthentication()
         authorization = ProductAuthorization()
-        excludes = ['deleted_at']
+        detail_uri_name = 'eid'
+        excludes = ['deleted_at', 'eid']
         queryset = Product.objects.all().order_by('id')
         resource_name = 'products'
         validation = ProductValidation()
@@ -78,4 +83,4 @@ class ProductResource(DatedResource):
         if bundle.obj.group_products.count():
             raise BadRequest('No se puede borrar el producto. Se encuentra en uso en uno o más grupos.')
         else:
-            super(UOMResource, self).obj_delete(bundle, **kwargs)
+            super(ProductResource, self).obj_delete(bundle, **kwargs)

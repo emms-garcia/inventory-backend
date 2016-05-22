@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated
+from commons.models import Dated, EID
 from companies.models import Company
 
 
@@ -51,7 +51,7 @@ class UserManager(BaseUserManager):
         return self._create_user(username, password, first_name, last_name, **extra_fields)
 
 
-class User(AbstractBaseUser, Dated, PermissionsMixin):
+class User(AbstractBaseUser, Dated, EID, PermissionsMixin):
 
     first_name = models.CharField(max_length=254, null=True, blank=True)
     last_name = models.CharField(max_length=254, null=True, blank=True)

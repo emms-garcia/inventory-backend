@@ -4,10 +4,10 @@
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated
+from commons.models import Dated, EID
 
 
-class Client(Dated):
+class Client(Dated, EID):
 
 
     address = models.CharField(max_length=254, null=False, blank=True)

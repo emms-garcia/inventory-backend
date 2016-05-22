@@ -17,6 +17,7 @@ from users.api.resources import UserResource
 
 class ClientResource(ModelResource):
 
+    id = fields.CharField(attribute='eid', readonly=True)
     created_at = fields.DateTimeField(readonly=True)
     created_by = fields.ToOneField(UserResource, attribute='created_by')
     updated_at = fields.DateTimeField(readonly=True)
@@ -26,7 +27,8 @@ class ClientResource(ModelResource):
         always_return_data = True
         authentication = SessionAuthentication()
         authorization = ClientAuthorization()
-        excludes = ['deleted_at']
+        detail_uri_name = 'eid'
+        excludes = ['deleted_at', 'eid']
         queryset = Client.objects.all().order_by('id')
         resource_name = 'clients'
         validation = ClientValidation()

@@ -4,10 +4,10 @@
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated
+from commons.models import Dated, EID
 
 
-class ProductGroup(Dated):
+class ProductGroup(Dated, EID):
 
     created_by = models.ForeignKey('users.User',
         related_name='product_groups')
@@ -29,7 +29,7 @@ class ProductGroup(Dated):
     def __str__(self):
         return self.name
 
-class GroupProduct(models.Model):
+class GroupProduct(EID):
     group = models.ForeignKey(ProductGroup,
         related_name='products')
     product = models.ForeignKey('products.Product',

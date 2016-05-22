@@ -89,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventory',
         'USER': 'inventory',
-        'PASSWORD': 'inventory123',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
     }

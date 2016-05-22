@@ -4,6 +4,20 @@
 from django.db import models
 from django.utils import timezone
 
+# INVENTORY
+from commons.utils import get_uuid
+
+
+class EID(models.Model):
+    eid = models.CharField(
+        blank=False,
+        default=get_uuid,
+        max_length=32,
+        null=False)
+
+    class Meta:
+        abstract = True
+
 
 class Dated(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)

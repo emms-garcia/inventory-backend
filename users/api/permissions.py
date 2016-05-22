@@ -17,9 +17,7 @@ class UserAuthorization(Authorization):
         return bundle.request.user.is_superuser
 
     def read_list(self, object_list, bundle):
-        if bundle.request.user.is_superuser:
-            return object_list.order_by('first_name')
-        elif bundle.request.user.parent == None:
+        if bundle.request.user.parent == None:
             return object_list.filter(Q(parent=bundle.request.user) | Q(id=bundle.request.user.id))
         else:
             return object_list.filter(id=bundle.request.user.id)

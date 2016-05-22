@@ -21,6 +21,7 @@ class GroupProductResource(DatedResource):
     class Meta:
         allowed_methods = ['get']
         authentication = SessionAuthentication()
+        detail_uri_name = 'eid'
         excludes = ['deleted_at']
         queryset = GroupProduct.objects.all().order_by('id')
         resource_name = 'group_products'
@@ -29,12 +30,14 @@ class GroupProductResource(DatedResource):
 class ProductGroupResource(DatedResource):
 
     created_by = fields.ToOneField(UserResource, attribute='created_by')
+    id = fields.CharField(attribute='eid', readonly=True)
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
         authorization = Authorization()
         authentication = SessionAuthentication()
-        excludes = ['deleted_at']
+        detail_uri_name = 'eid'
+        excludes = ['deleted_at', 'eid']
         queryset = ProductGroup.objects.all().order_by('id')
         resource_name = 'product_groups'
 

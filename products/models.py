@@ -4,15 +4,15 @@
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated
+from commons.models import Dated, EID
 
 
-class UOM(Dated):
+class UOM(Dated, EID):
     name = models.CharField(max_length=100, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
 
-class Product(Dated):
+class Product(Dated, EID):
 
     created_by = models.ForeignKey('users.User',
         related_name='products')

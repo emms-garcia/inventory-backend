@@ -24,6 +24,7 @@ from .validations import UserValidation
 
 class UserResource(ModelResource):
 
+    id = fields.CharField(attribute='eid', readonly=True)
     created_at = fields.FloatField(readonly=True)
     last_login = fields.FloatField(readonly=True)
 
@@ -32,7 +33,8 @@ class UserResource(ModelResource):
         always_return_data = True
         authentication = SessionAuthentication()
         authorization = UserAuthorization()
-        excludes = ['password', 'deleted_at', 'updated_at']
+        detail_uri_name = 'eid'
+        excludes = ['eid', 'is_active', 'password', 'deleted_at', 'updated_at']
         queryset = User.objects.all()
         resource_name = 'users'
 
@@ -72,14 +74,14 @@ class UserResource(ModelResource):
         data = self.deserialize(request, request.body, format=request.META.get(
             'CONTENT_TYPE', 'application/json'))
 
-        if not request.user.can('create_user'):
-            return HttpUnauthorized()
-
         username = data.pop('username')
         try:
             if request.user.is_anonymous():
                 User.objects.create_account(username, **data)
             else:
+                if not request.user.can('create_user'):
+                    return HttpUnauthorized()
+
                 data['parent'] = request.user
                 data['company'] = request.user.company
                 User.objects.create_user(username, **data)
