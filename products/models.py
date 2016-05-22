@@ -7,11 +7,6 @@ from django.db import models
 from commons.models import Dated, EID
 
 
-class UOM(Dated, EID):
-    name = models.CharField(max_length=100, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-
-
 class Product(Dated, EID):
 
     created_by = models.ForeignKey('users.User',
@@ -23,18 +18,16 @@ class Product(Dated, EID):
         blank=False,
         max_length=100,
         null=False)
-    price_per_uom = models.FloatField(
+    price_per_unit = models.FloatField(
         blank=False,
         default=1.0,
         null=False)
-    quantity = models.IntegerField(
-        default=0,
-        null=False,
-        blank=False)
-    uom = models.ForeignKey(UOM,
-        related_name='products')
+    quantity = models.FloatField(
+        blank=False,
+        default=1.0,
+        null=False)
 
-    REQUIRED_FIELDS = ['name', 'price_per_uom', 'uom']
+    REQUIRED_FIELDS = ['name', 'price_per_unit', 'quantity']
 
     class Meta:
         permissions = ()

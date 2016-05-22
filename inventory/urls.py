@@ -9,7 +9,7 @@ from tastypie.api import Api
 
 # INVENTORY
 from clients.api.resources import ClientResource
-from products.api.resources import ProductResource, UOMResource
+from products.api.resources import ProductResource
 from product_groups.api.resources import GroupProductResource, ProductGroupResource
 from users.api.resources import UserResource
 
@@ -19,7 +19,6 @@ api.register(ClientResource())
 api.register(GroupProductResource())
 api.register(ProductResource())
 api.register(ProductGroupResource())
-api.register(UOMResource())
 api.register(UserResource())
 
 urlpatterns = [
