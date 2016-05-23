@@ -5,4 +5,9 @@ from tastypie.authorization import Authorization
 
 
 class ProductAuthorization(Authorization):
-    pass
+
+    def update_list(self, object_list, bundle):
+        return False
+
+    def delete_list(self, object_list, bundle):
+        return False

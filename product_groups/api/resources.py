@@ -23,7 +23,7 @@ class GroupProductResource(DatedResource):
         authentication = SessionAuthentication()
         detail_uri_name = 'eid'
         excludes = ['deleted_at']
-        queryset = GroupProduct.objects.all().order_by('id')
+        queryset = GroupProduct.objects.all().order_by('-id')
         resource_name = 'group_products'
 
 
@@ -31,6 +31,7 @@ class ProductGroupResource(DatedResource):
 
     created_by = fields.ToOneField(UserResource, attribute='created_by')
     id = fields.CharField(attribute='eid', readonly=True)
+    total = fields.FloatField(readonly=True)
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
@@ -44,6 +45,10 @@ class ProductGroupResource(DatedResource):
     def dehydrate_created_at(self, bundle):
         if bundle.obj.created_at:
             return time.mktime(bundle.obj.created_at.timetuple())
+
+    def dehydrate_total(self, bundle):
+        group_products = GroupProduct.objects.filter(group=bundle.obj)
+        return sum([gp.product.price_per_unit * gp.quantity for gp in group_products])
 
     def dehydrate_updated_at(self, bundle):
         if bundle.obj.updated_at:

@@ -24,7 +24,7 @@ class Product(Dated, EID):
         null=False)
     quantity = models.FloatField(
         blank=False,
-        default=1.0,
+        default=0.0,
         null=False)
 
     REQUIRED_FIELDS = ['name', 'price_per_unit', 'quantity']
