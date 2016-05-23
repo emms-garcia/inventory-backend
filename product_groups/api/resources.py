@@ -18,11 +18,13 @@ from users.api.resources import UserResource
 
 class GroupProductResource(DatedResource):
 
+    id = fields.CharField(attribute='eid', readonly=True)
+
     class Meta:
         allowed_methods = ['get']
         authentication = SessionAuthentication()
         detail_uri_name = 'eid'
-        excludes = ['deleted_at']
+        excludes = ['deleted_at', 'eid']
         queryset = GroupProduct.objects.all().order_by('-id')
         resource_name = 'group_products'
 
@@ -31,6 +33,7 @@ class ProductGroupResource(DatedResource):
 
     created_by = fields.ToOneField(UserResource, attribute='created_by')
     id = fields.CharField(attribute='eid', readonly=True)
+    products = fields.ListField(readonly=True)
     total = fields.FloatField(readonly=True)
 
     class Meta:
@@ -46,9 +49,22 @@ class ProductGroupResource(DatedResource):
         if bundle.obj.created_at:
             return time.mktime(bundle.obj.created_at.timetuple())
 
-    def dehydrate_total(self, bundle):
+    def full_dehydrate(self, bundle, for_list=False):
+        bundle = super(ProductGroupResource, self).full_dehydrate(bundle, for_list=for_list)
+
         group_products = GroupProduct.objects.filter(group=bundle.obj)
-        return sum([gp.product.price_per_unit * gp.quantity for gp in group_products])
+        bundle.data['total'] = sum([gp.product.price_per_unit * gp.quantity for gp in group_products])
+        bundle.data['products'] = []
+        for gp in group_products:
+            bundle.data['products'].append({
+                'name': gp.product.name,
+                'price_per_unit': gp.product.price_per_unit,
+                'quantity': gp.quantity,
+                'resource_uri': '{}/{}/'.format(
+                    GroupProductResource().get_resource_uri(),
+                    gp.eid)
+            })
+        return bundle
 
     def dehydrate_updated_at(self, bundle):
         if bundle.obj.updated_at:
