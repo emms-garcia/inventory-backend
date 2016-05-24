@@ -15,10 +15,11 @@ from tastypie.http import HttpBadRequest, HttpResponse
 from tastypie.utils import trailing_slash
 
 # INVENTORY
-from ..models import Product
-from .permissions import ProductAuthorization
-from .validations import ProductValidation
 from commons.resources import DatedResource
+from companies.api.resources import CompanyResource
+from products.models import Product
+from products.api.permissions import ProductAuthorization
+from products.api.validations import ProductValidation
 from users.api.resources import UserResource
 
 
@@ -27,6 +28,7 @@ class ProductResource(DatedResource):
     created_at = fields.DateTimeField(readonly=True)
     created_by = fields.ToOneField(UserResource, attribute='created_by')
     id = fields.CharField(attribute='eid', readonly=True)
+    owner = fields.ToOneField(CompanyResource, attribute='owner')
     updated_at = fields.DateTimeField(readonly=True)
 
     class Meta:
@@ -49,6 +51,10 @@ class ProductResource(DatedResource):
 
     def hydrate_created_by(self, bundle):
         bundle.obj.created_by = bundle.request.user
+        return bundle
+
+    def hydrate_owner(self, bundle):
+        bundle.obj.owner = bundle.request.user.company
         return bundle
 
     def obj_delete(self, bundle, **kwargs):
@@ -80,7 +86,7 @@ class ProductResource(DatedResource):
                         'created_by': request.user,
                         'name': row[0],
                         'description': row[1],
-                        'price_per_unit': row[2],
+                        'price': row[2],
                         'quantity': row[3]
                     }
                     Product.objects.create(**params)

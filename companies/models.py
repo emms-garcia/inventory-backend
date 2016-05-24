@@ -3,8 +3,11 @@
 # DJANGO
 from django.db import models
 
+# INVENTORY
+from commons.models import Dated
 
-class Company(models.Model):
+
+class Company(Dated):
 
     name = models.CharField(max_length=254, null=False, blank=True)
     phone = models.CharField(max_length=20, null=False, blank=True)

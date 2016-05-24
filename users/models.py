@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # DJANGO
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
@@ -7,7 +8,7 @@ from django.db import models
 # INVENTORY
 from commons.models import Dated, EID
 from companies.models import Company
-
+from warehouses.models import Warehouse
 
 class UserManager(BaseUserManager):
 
@@ -33,6 +34,7 @@ class UserManager(BaseUserManager):
         return group
 
     def create_account(self, username, password=None, first_name=None, last_name=None, **extra_fields):
+        print 'here'
         extra_fields['company'] = Company.objects.create(name=extra_fields.get('company'))
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('is_staff', False)
@@ -74,13 +76,10 @@ class User(AbstractBaseUser, Dated, EID, PermissionsMixin):
 
     first_name = models.CharField(max_length=254, null=True, blank=True)
     last_name = models.CharField(max_length=254, null=True, blank=True)
-
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     username = models.EmailField(max_length=254, unique=True)
-
     parent = models.ForeignKey('self', null=True, blank=True)
-
     company = models.ForeignKey('companies.Company',
         related_name='users', null=True)
 
@@ -107,3 +106,18 @@ class User(AbstractBaseUser, Dated, EID, PermissionsMixin):
 
     def get_parent(self):
         return self.parent if self.parent else self
+
+    def init(self):
+        # Create default Warehouse
+        if not self.parent:
+            Warehouse.objects.create(
+                created_by=self,
+                name='Default',
+                owner=self.company)
+
+    def save(self, *args, **kwargs):
+        is_create = not self.pk
+        user = super(User, self).save(*args, **kwargs)
+        if is_create:
+            self.init()
+        return user

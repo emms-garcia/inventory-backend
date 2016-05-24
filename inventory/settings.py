@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'companies',
     'products',
     'product_groups',
-    'users'
+    'users',
+    'warehouses'
 )
 
 TASTYPIE_DEFAULT_FORMATS = ['json']
