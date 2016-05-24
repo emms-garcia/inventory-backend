@@ -1,13 +1,14 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # DJANGO
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated, EID
+from commons.models import Dated
 
 
-class Client(Dated, EID):
+class Client(Dated):
 
 
     address = models.CharField(max_length=254, null=False, blank=True)

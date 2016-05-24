@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # PYTHON
 import time
@@ -24,7 +25,6 @@ from .validations import UserValidation
 
 class UserResource(ModelResource):
 
-    id = fields.CharField(attribute='eid', readonly=True)
     created_at = fields.FloatField(readonly=True)
     last_login = fields.FloatField(readonly=True)
     permissions = fields.ListField(readonly=True)
@@ -34,8 +34,7 @@ class UserResource(ModelResource):
         always_return_data = True
         authentication = SessionAuthentication()
         authorization = UserAuthorization()
-        detail_uri_name = 'eid'
-        excludes = ['eid', 'is_active', 'password', 'deleted_at', 'updated_at']
+        excludes = ['is_active', 'password', 'deleted_at', 'updated_at']
         queryset = User.objects.all()
         resource_name = 'users'
 

@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated, EID
+from commons.models import Dated
 from companies.models import Company
 from warehouses.models import Warehouse
 
@@ -34,7 +34,6 @@ class UserManager(BaseUserManager):
         return group
 
     def create_account(self, username, password=None, first_name=None, last_name=None, **extra_fields):
-        print 'here'
         extra_fields['company'] = Company.objects.create(name=extra_fields.get('company'))
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('is_staff', False)
@@ -72,7 +71,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser, Dated, EID, PermissionsMixin):
+class User(AbstractBaseUser, Dated, PermissionsMixin):
 
     first_name = models.CharField(max_length=254, null=True, blank=True)
     last_name = models.CharField(max_length=254, null=True, blank=True)
@@ -112,8 +111,7 @@ class User(AbstractBaseUser, Dated, EID, PermissionsMixin):
         if not self.parent:
             Warehouse.objects.create(
                 created_by=self,
-                name='Default',
-                owner=self.company)
+                name='Default')
 
     def save(self, *args, **kwargs):
         is_create = not self.pk

@@ -1,11 +1,9 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # DJANGO
 from django.db import models
 from django.utils import timezone
-
-# INVENTORY
-from commons.utils import get_uuid
 
 
 class Address(models.Model):
@@ -29,17 +27,6 @@ class Address(models.Model):
         blank=True,
         max_length=32,
         null=True)
-
-    class Meta:
-        abstract = True
-
-
-class EID(models.Model):
-    eid = models.CharField(
-        blank=False,
-        default=get_uuid,
-        max_length=32,
-        null=False)
 
     class Meta:
         abstract = True

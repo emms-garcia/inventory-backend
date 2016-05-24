@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # PYTHON
 import time
@@ -18,13 +19,10 @@ from users.api.resources import UserResource
 
 class GroupProductResource(DatedResource):
 
-    id = fields.CharField(attribute='eid', readonly=True)
-
     class Meta:
         allowed_methods = ['get']
         authentication = SessionAuthentication()
-        detail_uri_name = 'eid'
-        excludes = ['deleted_at', 'eid']
+        excludes = ['deleted_at']
         queryset = GroupProduct.objects.all().order_by('-id')
         resource_name = 'group_products'
 
@@ -32,7 +30,6 @@ class GroupProductResource(DatedResource):
 class ProductGroupResource(DatedResource):
 
     created_by = fields.ToOneField(UserResource, attribute='created_by')
-    id = fields.CharField(attribute='eid', readonly=True)
     products = fields.ListField(readonly=True)
     total = fields.FloatField(readonly=True)
 
@@ -40,8 +37,7 @@ class ProductGroupResource(DatedResource):
         allowed_methods = ['get', 'patch', 'post', 'delete']
         authorization = Authorization()
         authentication = SessionAuthentication()
-        detail_uri_name = 'eid'
-        excludes = ['deleted_at', 'eid']
+        excludes = ['deleted_at']
         queryset = ProductGroup.objects.all().order_by('id')
         resource_name = 'product_groups'
 
@@ -61,7 +57,7 @@ class ProductGroupResource(DatedResource):
                 'quantity': gp.quantity,
                 'resource_uri': '{}/{}/'.format(
                     GroupProductResource().get_resource_uri(),
-                    gp.eid)
+                    gp.id)
             })
         return bundle
 

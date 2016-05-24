@@ -5,11 +5,11 @@ from __future__ import unicode_literals
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated, EID
+from commons.models import Dated
 from warehouses.models import Warehouse, WarehouseStock
 
 
-class Product(Dated, EID):
+class Product(Dated):
 
     created_by = models.ForeignKey(
         'users.User',
@@ -28,15 +28,10 @@ class Product(Dated, EID):
     sales_price = models.FloatField(
         blank=False,
         null=True)
-    owner = models.ForeignKey(
-        'companies.Company',
-        related_name='products',
-    )
 
     REQUIRED_FIELDS = [
         'name',
-        'price',
-        'owner',
+        'price'
     ]
 
     class Meta:
@@ -48,7 +43,9 @@ class Product(Dated, EID):
         return self.name
 
     def init(self):
-        for warehouse in Warehouse.objects.filter(owner=self.owner):
+        for warehouse in Warehouse.objects.filter(
+                created_by__company=self.created_by.company):
+
             WarehouseStock.objects.create(
                 warehouse=warehouse,
                 product=self,

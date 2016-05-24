@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # PYTHON
 import csv
@@ -16,7 +17,6 @@ from tastypie.utils import trailing_slash
 
 # INVENTORY
 from commons.resources import DatedResource
-from companies.api.resources import CompanyResource
 from products.models import Product
 from products.api.permissions import ProductAuthorization
 from products.api.validations import ProductValidation
@@ -27,16 +27,14 @@ class ProductResource(DatedResource):
 
     created_at = fields.DateTimeField(readonly=True)
     created_by = fields.ToOneField(UserResource, attribute='created_by')
-    id = fields.CharField(attribute='eid', readonly=True)
-    owner = fields.ToOneField(CompanyResource, attribute='owner')
+    quantity = fields.FloatField(readonly=True)
     updated_at = fields.DateTimeField(readonly=True)
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
         authentication = SessionAuthentication()
         authorization = ProductAuthorization()
-        detail_uri_name = 'eid'
-        excludes = ['deleted_at', 'eid']
+        excludes = ['deleted_at']
         queryset = Product.objects.all().order_by('-id')
         resource_name = 'products'
         validation = ProductValidation()
@@ -49,12 +47,11 @@ class ProductResource(DatedResource):
         if bundle.obj.updated_at:
             return time.mktime(bundle.obj.updated_at.timetuple())
 
+    def dehydrate_quantity(self, bundle):
+        return sum([stock.quantity for stock in bundle.obj.stock.all()])
+
     def hydrate_created_by(self, bundle):
         bundle.obj.created_by = bundle.request.user
-        return bundle
-
-    def hydrate_owner(self, bundle):
-        bundle.obj.owner = bundle.request.user.company
         return bundle
 
     def obj_delete(self, bundle, **kwargs):

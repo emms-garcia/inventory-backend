@@ -1,13 +1,14 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 # DJANGO
 from django.db import models
 
 # INVENTORY
-from commons.models import Dated, EID
+from commons.models import Dated
 
 
-class ProductGroup(Dated, EID):
+class ProductGroup(Dated):
 
     created_by = models.ForeignKey('users.User',
         related_name='product_groups')
@@ -29,7 +30,7 @@ class ProductGroup(Dated, EID):
     def __str__(self):
         return self.name
 
-class GroupProduct(EID):
+class GroupProduct(models.Model):
     group = models.ForeignKey(ProductGroup,
         related_name='products')
     product = models.ForeignKey('products.Product',

@@ -5,10 +5,10 @@ from __future__ import unicode_literals
 from django.db import models
 
 # INVENTORY
-from commons.models import Address, Dated, EID
+from commons.models import Address, Dated
 
 
-class Warehouse(Address, Dated, EID):
+class Warehouse(Address, Dated):
 
     created_by = models.ForeignKey(
         'users.User',
@@ -20,14 +20,9 @@ class Warehouse(Address, Dated, EID):
     contact = models.ForeignKey(
         'users.User',
         null=True)
-    owner = models.ForeignKey(
-        'companies.Company',
-        related_name='warehouses'
-    )
-
 
     REQUIRED_FIELDS = [
-        'created_by', 'name', 'owner'
+        'created_by', 'name'
     ]
 
     class Meta:
@@ -37,6 +32,7 @@ class Warehouse(Address, Dated, EID):
 
     def __str__(self):
         return self.name
+
 
 class WarehouseStock(models.Model):
     warehouse = models.ForeignKey(
