@@ -1,5 +1,4 @@
 # coding: utf-8
-from __future__ import unicode_literals
 
 # PYTHON
 import csv
@@ -83,11 +82,10 @@ class ProductResource(DatedResource):
                         'created_by': request.user,
                         'name': row[0],
                         'description': row[1],
-                        'price': row[2],
-                        'quantity': row[3]
+                        'price': row[2]
                     }
                     Product.objects.create(**params)
-        except Exception:
+        except Exception as e:
             return HttpBadRequest('Archivo invalido')
 
         return HttpResponse()

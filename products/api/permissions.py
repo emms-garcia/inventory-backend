@@ -7,6 +7,9 @@ from tastypie.authorization import Authorization
 
 class ProductAuthorization(Authorization):
 
+    def delete_detail(self, object_list, bundle):
+      return bundle.obj.created_by == bundle.request.user
+
     def update_list(self, object_list, bundle):
         return False
 

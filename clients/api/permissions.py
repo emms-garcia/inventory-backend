@@ -20,10 +20,14 @@ class ClientAuthorization(Authorization):
         return []
 
     def update_detail(self, object_list, bundle):
-        return bundle.request.user.is_superuser or bundle.request.user.is_staff
+        return bundle.request.user.is_superuser or \
+        bundle.request.user.is_staff or \
+        bundle.request.user == bundle.obj.created_by
 
     def delete_list(self, object_list, bundle):
         return []
 
     def delete_detail(self, object_list, bundle):
-        return bundle.request.user.is_superuser or bundle.request.user.is_staff
+        return bundle.request.user.is_superuser or \
+        bundle.request.user.is_staff or \
+        bundle.request.user == bundle.obj.created_by

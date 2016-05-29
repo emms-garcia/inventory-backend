@@ -40,5 +40,6 @@ class UserAuthorization(Authorization):
         return False
 
     def delete_detail(self, object_list, bundle):
-        return bundle.request.user.is_superuser \
+        return (bundle.request.user.is_superuser or \
+            (bundle.obj.parent.id == bundle.request.user.id)) \
             and not (bundle.request.user.id == bundle.obj.id)
