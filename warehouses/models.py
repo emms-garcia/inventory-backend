@@ -20,6 +20,9 @@ class Warehouse(Address, Dated):
     contact = models.ForeignKey(
         'users.User',
         null=True)
+    description = models.TextField(
+        blank=True,
+        null=True)
 
     REQUIRED_FIELDS = [
         'created_by', 'name'

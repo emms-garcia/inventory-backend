@@ -111,7 +111,8 @@ class User(AbstractBaseUser, Dated, PermissionsMixin):
         if not self.parent:
             Warehouse.objects.create(
                 created_by=self,
-                name='Default')
+                name='Default',
+                description='Default Warehouse')
 
     def save(self, *args, **kwargs):
         is_create = not self.pk

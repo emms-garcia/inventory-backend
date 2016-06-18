@@ -20,6 +20,9 @@ class WarehouseResource(ModelResource):
         queryset = Warehouse.objects.all().order_by('-id')
         resource_name = 'warehouses'
 
+    def obj_delete(self, bundle, **kwargs):
+        return super(WarehouseResource, self).obj_delete(bundle, **kwargs)
+
 
 class WarehouseStockResource(ModelResource):
 
