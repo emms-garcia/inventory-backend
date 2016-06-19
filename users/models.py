@@ -20,8 +20,13 @@ class UserManager(BaseUserManager):
             raise ValueError('The given username must be set')
 
         username = self.normalize_email(username)
-        user = self.model(username=username, password=password,
-                          first_name=first_name, last_name=last_name, **extra_fields)
+        user = self.model(
+            first_name=first_name,
+            last_name=last_name,
+            password=password,
+            username=username,
+            **extra_fields
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -106,17 +111,13 @@ class User(AbstractBaseUser, Dated, PermissionsMixin):
     def get_parent(self):
         return self.parent if self.parent else self
 
-    def init(self):
-        # Create default Warehouse
-        if not self.parent:
-            Warehouse.objects.create(
-                created_by=self,
-                name='Default',
-                description='Default Warehouse')
-
     def save(self, *args, **kwargs):
         is_create = not self.pk
         user = super(User, self).save(*args, **kwargs)
-        if is_create:
-            self.init()
+        if is_create and not self.parent:
+            Warehouse.objects.create(
+                name='Default',
+                description='Default Warehouse',
+                owner=self.company
+            )
         return user

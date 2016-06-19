@@ -9,9 +9,6 @@ from commons.models import Dated
 
 
 class ProductGroup(Dated):
-
-    created_by = models.ForeignKey('users.User',
-        related_name='product_groups')
     description = models.TextField(
         blank=True,
         null=True)
@@ -19,8 +16,13 @@ class ProductGroup(Dated):
         blank=False,
         max_length=100,
         null=False)
+    owner = models.ForeignKey(
+        'companies.Company',
+        null=True,
+        related_name='product_groups'
+    )
 
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name', 'owner']
 
     class Meta:
         permissions = ()
@@ -31,16 +33,21 @@ class ProductGroup(Dated):
         return self.name
 
 class GroupProduct(models.Model):
-    group = models.ForeignKey(ProductGroup,
-        related_name='products')
-    product = models.ForeignKey('products.Product',
-        related_name='group_products')
-    quantity = models.IntegerField(
+    group = models.ForeignKey(
+        ProductGroup,
+        related_name='products'
+    )
+    product = models.ForeignKey(
+        'products.Product',
+        related_name='group_products'
+    )
+    quantity = models.FloatField(
         blank=False,
-        default=1,
-        null=False)
+        default=1.0,
+        null=False
+    )
 
-    REQUIRED_FIELDS = ['name', 'group', 'product', 'quantity']
+    REQUIRED_FIELDS = ['group', 'product', 'quantity']
 
     class Meta:
         permissions = ()

@@ -16,16 +16,16 @@ from tastypie.utils import trailing_slash
 
 # INVENTORY
 from commons.resources import DatedResource
+from companies.api.resources import CompanyResource
 from products.models import Product
 from products.api.permissions import ProductAuthorization
 from products.api.validations import ProductValidation
-from users.api.resources import UserResource
 
 
 class ProductResource(DatedResource):
 
     created_at = fields.DateTimeField(readonly=True)
-    created_by = fields.ToOneField(UserResource, attribute='created_by')
+    owner = fields.ToOneField(CompanyResource, attribute='owner')
     quantity = fields.FloatField(readonly=True)
     updated_at = fields.DateTimeField(readonly=True)
 
@@ -49,8 +49,8 @@ class ProductResource(DatedResource):
     def dehydrate_quantity(self, bundle):
         return sum([stock.quantity for stock in bundle.obj.stock.all()])
 
-    def hydrate_created_by(self, bundle):
-        bundle.obj.created_by = bundle.request.user
+    def hydrate_owner(self, bundle):
+        bundle.obj.owner = bundle.request.user.company
         return bundle
 
     def obj_delete(self, bundle, **kwargs):
@@ -79,7 +79,7 @@ class ProductResource(DatedResource):
                 csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
                 for row in csv_reader:
                     params = {
-                        'created_by': request.user,
+                        'owner_id': request.user.company_id,
                         'name': row[0],
                         'description': row[1],
                         'price': row[2]

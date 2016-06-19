@@ -11,9 +11,9 @@ from tastypie.exceptions import BadRequest, NotFound
 from tastypie import fields
 
 # INVENTORY
-from ..models import GroupProduct, ProductGroup
 from commons.resources import DatedResource
 from products.api.resources import ProductResource
+from product_groups.models import GroupProduct, ProductGroup
 from users.api.resources import UserResource
 
 
@@ -29,8 +29,8 @@ class GroupProductResource(DatedResource):
 
 class ProductGroupResource(DatedResource):
 
-    created_by = fields.ToOneField(UserResource, attribute='created_by')
     products = fields.ListField(readonly=True)
+    owner_id = fields.IntegerField()
     total = fields.FloatField(readonly=True)
 
     class Meta:
@@ -65,8 +65,8 @@ class ProductGroupResource(DatedResource):
         if bundle.obj.updated_at:
             return time.mktime(bundle.obj.updated_at.timetuple())
 
-    def hydrate_created_by(self, bundle):
-        bundle.obj.created_by = bundle.request.user
+    def hydrate_owner_id(self, bundle):
+        bundle.obj.owner_id = bundle.request.user.company_id
         return bundle
 
     def obj_create(self, bundle, **kwargs):

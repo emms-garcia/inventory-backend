@@ -22,7 +22,7 @@ class ClientAuthorization(Authorization):
     def update_detail(self, object_list, bundle):
         return bundle.request.user.is_superuser or \
         bundle.request.user.is_staff or \
-        bundle.request.user == bundle.obj.created_by
+        bundle.request.user.company_id == bundle.obj.owner_id
 
     def delete_list(self, object_list, bundle):
         return []
@@ -30,4 +30,4 @@ class ClientAuthorization(Authorization):
     def delete_detail(self, object_list, bundle):
         return bundle.request.user.is_superuser or \
         bundle.request.user.is_staff or \
-        bundle.request.user == bundle.obj.created_by
+        bundle.request.user.company_id == bundle.obj.owner_id

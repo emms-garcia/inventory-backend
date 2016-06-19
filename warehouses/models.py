@@ -9,23 +9,20 @@ from commons.models import Address, Dated
 
 
 class Warehouse(Address, Dated):
-
-    created_by = models.ForeignKey(
-        'users.User',
-        related_name='warehouses')
     name = models.CharField(
         blank=True,
         max_length=254,
         null=False)
-    contact = models.ForeignKey(
-        'users.User',
-        null=True)
     description = models.TextField(
         blank=True,
         null=True)
+    owner = models.ForeignKey(
+        'companies.Company',
+        null=True,
+        related_name='warehouses')
 
     REQUIRED_FIELDS = [
-        'created_by', 'name'
+        'name', 'owner'
     ]
 
     class Meta:
@@ -35,6 +32,9 @@ class Warehouse(Address, Dated):
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        return super(Warehouse, self).delete(*args, **kwargs)
 
 
 class WarehouseStock(models.Model):
@@ -60,4 +60,4 @@ class WarehouseStock(models.Model):
     class Meta:
         permissions = ()
         verbose_name = 'warehouse_stock'
-        verbose_name_plural = 'warehouse_stock'
+        verbose_name_plural = 'warehouse_stocks'

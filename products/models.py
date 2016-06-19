@@ -10,24 +10,29 @@ from warehouses.models import Warehouse, WarehouseStock
 
 
 class Product(Dated):
-
-    created_by = models.ForeignKey(
-        'users.User',
-        related_name='products')
     description = models.TextField(
         blank=True,
-        null=True)
+        null=True
+    )
     name = models.CharField(
         blank=False,
         max_length=100,
-        null=False)
+        null=False
+    )
+    owner = models.ForeignKey(
+        'companies.Company',
+        null=True,
+        related_name='products'
+    )
     price = models.FloatField(
         blank=False,
         default=1.0,
-        null=False)
+        null=False
+    )
     sales_price = models.FloatField(
         blank=False,
-        null=True)
+        null=True
+    )
 
     REQUIRED_FIELDS = [
         'name',
@@ -42,20 +47,15 @@ class Product(Dated):
     def __str__(self):
         return self.name
 
-    def init(self):
-        for warehouse in Warehouse.objects.filter(
-                created_by__company=self.created_by.company):
-
-            WarehouseStock.objects.create(
-                warehouse=warehouse,
-                product=self,
-                quantity=0.0
-            )
-        self.save()
-
     def save(self, *args, **kwargs):
         first_time = not self.pk
         product = super(Product, self).save(*args, **kwargs)
         if first_time:
-            self.init()
+            for warehouse in Warehouse.objects.filter(owner=self.owner):
+                WarehouseStock.objects.create(
+                    warehouse=warehouse,
+                    product=self,
+                    quantity=0.0
+                )
+            self.save()
         return product

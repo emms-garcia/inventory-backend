@@ -10,17 +10,17 @@ from tastypie.resources import ModelResource
 from tastypie import fields
 
 # INVENTORY
-from ..models import Client
-from .permissions import ClientAuthorization
-from .validations import ClientValidation
-from users.api.resources import UserResource
+from clients.models import Client
+from clients.api.permissions import ClientAuthorization
+from clients.api.validations import ClientValidation
+from companies.api.resources import CompanyResource
 
 
 class ClientResource(ModelResource):
 
     created_at = fields.DateTimeField(readonly=True)
-    created_by = fields.ToOneField(UserResource, attribute='created_by')
     updated_at = fields.DateTimeField(readonly=True)
+    owner_id = fields.IntegerField()
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
@@ -43,6 +43,6 @@ class ClientResource(ModelResource):
     def obj_create(self, bundle, **kwargs):
         return super(ClientResource, self).obj_create(bundle, **kwargs)
 
-    def hydrate_created_by(self, bundle):
-        bundle.obj.created_by = bundle.request.user
+    def hydrate_owner_id(self, bundle):
+        bundle.obj.owner_id = bundle.request.user.company_id
         return bundle
