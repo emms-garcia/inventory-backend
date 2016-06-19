@@ -12,6 +12,7 @@ from tastypie.api import Api
 from clients.api.resources import ClientResource
 from products.api.resources import ProductResource
 from product_groups.api.resources import GroupProductResource, ProductGroupResource
+from uoms.api.resources import UOMResource
 from users.api.resources import UserResource
 from warehouses.api.resources import WarehouseResource, WarehouseStockResource
 
@@ -21,6 +22,7 @@ api.register(ClientResource())
 api.register(GroupProductResource())
 api.register(ProductResource())
 api.register(ProductGroupResource())
+api.register(UOMResource())
 api.register(UserResource())
 api.register(WarehouseResource())
 api.register(WarehouseStockResource())

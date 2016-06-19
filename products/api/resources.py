@@ -16,18 +16,20 @@ from tastypie.utils import trailing_slash
 
 # INVENTORY
 from commons.resources import DatedResource
-from companies.api.resources import CompanyResource
 from products.models import Product
 from products.api.permissions import ProductAuthorization
 from products.api.validations import ProductValidation
+from uoms.api.resources import UOMResource
+from warehouses.models import Warehouse, WarehouseStock
 
 
 class ProductResource(DatedResource):
 
     created_at = fields.DateTimeField(readonly=True)
-    owner = fields.ToOneField(CompanyResource, attribute='owner')
-    quantity = fields.FloatField(readonly=True)
+    owner_id = fields.IntegerField()
+    quantity = fields.FloatField()
     updated_at = fields.DateTimeField(readonly=True)
+    uom = fields.ToOneField(UOMResource, attribute='uom', full=True)
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
@@ -49,8 +51,24 @@ class ProductResource(DatedResource):
     def dehydrate_quantity(self, bundle):
         return sum([stock.quantity for stock in bundle.obj.stock.all()])
 
-    def hydrate_owner(self, bundle):
-        bundle.obj.owner = bundle.request.user.company
+    def hydrate_owner_id(self, bundle):
+        bundle.obj.owner_id = bundle.request.user.company_id
+        return bundle
+
+    def hydrate_uom(self, bundle):
+        bundle.obj.uom_id = bundle.data['uom']
+        return bundle
+
+    def obj_create(self, bundle, **kwargs):
+        quantity = bundle.data['quantity']
+        bundle = super(ProductResource, self).obj_create(bundle, **kwargs)
+        for warehouse in Warehouse.objects.filter(owner_id=bundle.obj.owner_id):
+            WarehouseStock.objects.create(
+                warehouse_id=warehouse.id,
+                product_id=bundle.obj.id,
+                quantity=quantity
+            )
+            quantity = 0.0
         return bundle
 
     def obj_delete(self, bundle, **kwargs):

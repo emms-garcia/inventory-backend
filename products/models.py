@@ -33,6 +33,10 @@ class Product(Dated):
         blank=False,
         null=True
     )
+    uom = models.ForeignKey(
+        'uoms.UOM',
+        null=True
+    )
 
     REQUIRED_FIELDS = [
         'name',
@@ -46,16 +50,3 @@ class Product(Dated):
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        first_time = not self.pk
-        product = super(Product, self).save(*args, **kwargs)
-        if first_time:
-            for warehouse in Warehouse.objects.filter(owner=self.owner):
-                WarehouseStock.objects.create(
-                    warehouse=warehouse,
-                    product=self,
-                    quantity=0.0
-                )
-            self.save()
-        return product
