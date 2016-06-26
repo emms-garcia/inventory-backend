@@ -34,12 +34,4 @@ class ClientValidation(Validation):
                 errors['email'] = [
                     _(u'Correo: Debe ser un correo electrónico.')]
 
-        # Company required, must be longer than 2 characters
-        if bundle.data.get('company'):
-            if len(bundle.data['company']) < 3:
-                errors['company'] = [
-                    _(u'Compañía: Este campo debe tener al menos 3 caracteres.')]
-        else:
-            errors['company'] = [_(u'Compañía: Este campo es requerido.')]
-
         return errors

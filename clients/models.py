@@ -12,12 +12,12 @@ class Client(Dated):
     address = models.CharField(
         blank=True,
         max_length=254,
-        null=False
+        null=True
     )
     cellphone = models.CharField(
         blank=True,
         max_length=20,
-        null=False
+        null=True
     )
     description = models.TextField(
         blank=True,
@@ -26,7 +26,7 @@ class Client(Dated):
     company = models.CharField(
         blank=True,
         max_length=100,
-        null=False
+        null=True
     )
     email = models.EmailField(
         max_length=254
@@ -50,12 +50,12 @@ class Client(Dated):
     phone = models.CharField(
         blank=True,
         max_length=20,
-        null=False
+        null=True
     )
     rfc = models.CharField(
         blank=True,
         max_length=100,
-        null=False
+        null=True
     )
 
     REQUIRED_FIELDS = ['name', 'company', 'owner']

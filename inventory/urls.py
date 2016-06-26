@@ -12,6 +12,7 @@ from tastypie.api import Api
 from clients.api.resources import ClientResource
 from products.api.resources import ProductResource
 from product_groups.api.resources import GroupProductResource, ProductGroupResource
+from transactions.api.resources import TransactionResource
 from uoms.api.resources import UOMResource
 from users.api.resources import UserResource
 from warehouses.api.resources import WarehouseResource, WarehouseStockResource
@@ -22,6 +23,7 @@ api.register(ClientResource())
 api.register(GroupProductResource())
 api.register(ProductResource())
 api.register(ProductGroupResource())
+api.register(TransactionResource())
 api.register(UOMResource())
 api.register(UserResource())
 api.register(WarehouseResource())
@@ -29,5 +31,5 @@ api.register(WarehouseStockResource())
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include(api.urls)),
+    url(r'^v1/', include(api.urls)),
 ]

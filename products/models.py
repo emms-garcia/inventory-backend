@@ -29,13 +29,16 @@ class Product(Dated):
         default=1.0,
         null=False
     )
-    sales_price = models.FloatField(
+    price_per_unit = models.FloatField(
         blank=False,
         null=True
     )
     uom = models.ForeignKey(
         'uoms.UOM',
         null=True
+    )
+    quantity = models.FloatField(
+        default=0.0
     )
 
     REQUIRED_FIELDS = [

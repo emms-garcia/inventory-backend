@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'companies',
     'products',
     'product_groups',
+    'transactions',
     'uoms',
     'users',
     'warehouses'

@@ -27,7 +27,7 @@ class ProductResource(DatedResource):
 
     created_at = fields.DateTimeField(readonly=True)
     owner_id = fields.IntegerField()
-    quantity = fields.FloatField()
+    #quantity = fields.FloatField()
     updated_at = fields.DateTimeField(readonly=True)
     uom = fields.ToOneField(UOMResource, attribute='uom', full=True)
 
@@ -48,8 +48,8 @@ class ProductResource(DatedResource):
         if bundle.obj.updated_at:
             return time.mktime(bundle.obj.updated_at.timetuple())
 
-    def dehydrate_quantity(self, bundle):
-        return sum([stock.quantity for stock in bundle.obj.stock.all()])
+    #def dehydrate_quantity(self, bundle):
+    #    return sum([stock.quantity for stock in bundle.obj.stock.all()])
 
     def hydrate_owner_id(self, bundle):
         bundle.obj.owner_id = bundle.request.user.company_id
@@ -60,15 +60,15 @@ class ProductResource(DatedResource):
         return bundle
 
     def obj_create(self, bundle, **kwargs):
-        quantity = bundle.data['quantity']
+        #quantity = bundle.data['quantity']
         bundle = super(ProductResource, self).obj_create(bundle, **kwargs)
-        for warehouse in Warehouse.objects.filter(owner_id=bundle.obj.owner_id):
-            WarehouseStock.objects.create(
-                warehouse_id=warehouse.id,
-                product_id=bundle.obj.id,
-                quantity=quantity
-            )
-            quantity = 0.0
+        #for warehouse in Warehouse.objects.filter(owner_id=bundle.obj.owner_id):
+        #    WarehouseStock.objects.create(
+        #        warehouse_id=warehouse.id,
+        #        product_id=bundle.obj.id,
+        #        quantity=quantity
+        #    )
+        #    quantity = 0.0
         return bundle
 
     def obj_delete(self, bundle, **kwargs):
