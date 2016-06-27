@@ -16,7 +16,7 @@ class UOMResource(ModelResource):
     owner_id = fields.IntegerField()
 
     class Meta:
-        allowed_methods = ['get', 'post']
+        allowed_methods = ['get', 'post', 'patch', 'delete']
         authentication = SessionAuthentication()
         authorization = UOMAuthorization()
         excludes = ['deleted_at']

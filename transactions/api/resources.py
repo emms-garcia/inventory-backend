@@ -27,7 +27,6 @@ class TransactionResource(ModelResource):
     created_at = fields.DateTimeField(readonly=True)
     created_by = fields.IntegerField()
     owner_id = fields.IntegerField()
-    voucher = fields.DictField()
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
@@ -38,7 +37,7 @@ class TransactionResource(ModelResource):
         filtering = {
             'type': ('exact')
         }
-        queryset = Transaction.objects.all().order_by('id')
+        queryset = Transaction.objects.all().order_by('-id')
         resource_name = 'transactions'
 
     def dehydrate_created_at(self, bundle):
@@ -54,13 +53,18 @@ class TransactionResource(ModelResource):
             with transaction.atomic():
                 for data in voucher.get('cart', []):
                     product = Product.objects.get(pk=data['id'])
-                    if product.quantity < data['quantity']:
-                        raise IntegrityError
 
-                    product.quantity = product.quantity - data['quantity']
-                    product.save()
+                    if bundle.data['type'] == 'sale':
+                        if product.quantity < data['quantity']:
+                            raise IntegrityError
+
+                        product.quantity = product.quantity - data['quantity']
+                        product.save()
+                    elif bundle.data['type'] == 'purchase':
+                        product.quantity = product.quantity + data['quantity']
+                        product.save()
         except IntegrityError:
-            raise BadRequest('No se pudo finalizar la compra')
+            raise BadRequest('No se pudo finalizar la compra. Algún producto no tiene la cantidad suficiente.')
 
         return super(TransactionResource, self).obj_create(bundle, **kwargs)
 
