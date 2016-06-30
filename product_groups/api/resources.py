@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 # PYTHON
+import math
 import time
 
 # TASTYPIE
@@ -48,12 +49,12 @@ class ProductGroupResource(DatedResource):
     def full_dehydrate(self, bundle, for_list=False):
         bundle = super(ProductGroupResource, self).full_dehydrate(bundle, for_list=for_list)
         group_products = GroupProduct.objects.filter(group=bundle.obj)
-        bundle.data['total'] = sum([gp.product.price * gp.quantity for gp in group_products])
+        bundle.data['total'] = round(sum([gp.product.price_per_unit * gp.quantity for gp in group_products]), 6)
         bundle.data['products'] = []
         for gp in group_products:
             bundle.data['products'].append({
                 'name': gp.product.name,
-                'price': gp.product.price,
+                'price': gp.product.price_per_unit,
                 'quantity': gp.quantity,
                 'resource_uri': '{}/{}/'.format(
                     GroupProductResource().get_resource_uri(),
