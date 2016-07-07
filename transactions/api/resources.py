@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 # PYTHON
-import json
+import ast
+import simplejson
 import time
 
 # DJANGO
@@ -30,7 +31,6 @@ class TransactionResource(ModelResource):
 
     class Meta:
         allowed_methods = ['get', 'patch', 'post', 'delete']
-        always_return_data = True
         authentication = SessionAuthentication()
         authorization = TransactionAuthorization()
         excludes = ['deleted_at']
@@ -45,7 +45,11 @@ class TransactionResource(ModelResource):
             return time.mktime(bundle.obj.created_at.timetuple())
 
     def dehydrate_voucher(self, bundle):
-        return bundle.obj.voucher
+        return ast.literal_eval(bundle.obj.voucher)
+
+    def hydrate_voucher(self, bundle):
+        bundle.obj.voucher = simplejson.dumps(bundle.data['voucher'])
+        return bundle
 
     def obj_create(self, bundle, **kwargs):
         voucher = bundle.data.get('voucher', {})

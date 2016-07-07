@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 # DJANGO
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 # INVENTORY
@@ -39,7 +38,10 @@ class Transaction(Dated):
         null=False,
         max_length=10
     )
-    voucher = JSONField(default={})
+    voucher = models.TextField(
+        blank=False,
+        null=False,
+        default='{}')
 
     REQUIRED_FIELDS = [
         'created_by',
