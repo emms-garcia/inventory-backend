@@ -58,3 +58,32 @@ class Transaction(Dated):
 
     def __str__(self):
         return self.name
+
+
+class Tax(models.Model):
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+    name = models.CharField(
+        blank=False,
+        max_length=100,
+        null=False
+    )
+    percent = models.FloatField(
+        blank=False,
+        null=False,
+    )
+
+    REQUIRED_FIELDS = [
+        'name',
+        'percent',
+    ]
+
+    class Meta:
+        permissions = ()
+        verbose_name = 'tax'
+        verbose_name_plural = 'taxes'
+
+    def __str__(self):
+        return self.name

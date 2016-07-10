@@ -19,7 +19,7 @@ from tastypie import fields
 from clients.api.resources import ClientResource
 from companies.api.resources import CompanyResource
 from products.models import Product
-from transactions.models import Transaction
+from transactions.models import Tax, Transaction
 from transactions.api.permissions import TransactionAuthorization
 
 class TransactionResource(ModelResource):
@@ -79,3 +79,13 @@ class TransactionResource(ModelResource):
     def hydrate_owner_id(self, bundle):
         bundle.obj.owner_id = bundle.request.user.company_id
         return bundle
+
+
+class TaxResource(ModelResource):
+
+    class Meta:
+        allowed_methods = ['get', 'patch', 'post', 'delete']
+        authentication = SessionAuthentication()
+        excludes = ['deleted_at']
+        queryset = Tax.objects.all().order_by('-id')
+        resource_name = 'taxes'

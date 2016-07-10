@@ -14,11 +14,6 @@ class Client(Dated):
         max_length=254,
         null=True
     )
-    cellphone = models.CharField(
-        blank=True,
-        max_length=20,
-        null=True
-    )
     description = models.TextField(
         blank=True,
         null=True

@@ -23,6 +23,6 @@ class UOMResource(ModelResource):
         queryset = UOM.objects.all().order_by('-id')
         resource_name = 'uoms'
 
-    def hydrate_owner(self, bundle):
+    def hydrate_owner_id(self, bundle):
         bundle.obj.owner_id = bundle.request.user.company_id
         return bundle
