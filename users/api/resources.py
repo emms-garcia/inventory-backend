@@ -18,13 +18,15 @@ from tastypie.utils import trailing_slash
 from tastypie import fields
 
 # INVENTORY
-from ..models import User, UserManager
-from .permissions import UserAuthorization
-from .validations import UserValidation
+from companies.api.resources import CompanyResource
+from users.models import User, UserManager
+from users.api.permissions import UserAuthorization
+from users.api.validations import UserValidation
 
 
 class UserResource(ModelResource):
 
+    company = fields.ToOneField(CompanyResource, attribute='company', full=True)
     created_at = fields.FloatField(readonly=True)
     last_login = fields.FloatField(readonly=True)
     permissions = fields.ListField(readonly=True)
